@@ -52,7 +52,7 @@ static bool test2()
     return true;
 }
 
-static bool test3()
+static bool test_shuffle()
 {
     Fx4 a = {1.1, 2.2, 3.3, 4.4};
     U32x4 mask = {3, 2, 1, 0};
@@ -69,15 +69,40 @@ static bool test3()
     return true;
 }
 
-/*test4
-get
-set
-*/
+static bool test__all_ones()
+{
+    assert(test_all_ones(true_vec<U32x4>()));
+    assert(test_all_zeros(false_vec<U32x4>()));
+
+    assert(test_all_ones((I64x2){-1L,-1L}));
+    assert(!test_all_ones((I64x2){-1L,0L}));
+    assert(!test_all_zeros((I64x2){-1L,0L}));
+    assert(test_all_zeros((I64x2){0L,0L}));
+
+    return true;
+}
+
+static bool test_fill()
+{
+    U32x4 a;
+    fill_zero(a);
+    assert(test_all_zeros(a));
+
+    fill(a, ~0u);
+    assert(test_all_ones(a));
+
+    fill(a, 7u);
+    assert(!test_all_ones(a));
+    assert(equal(a, (U32x4){7,7,7,7}));
+    assert(!equal(a, (U32x4){7,77,7,7}));
+
+    return true;
+}
 
 using TestFun = bool (*)();
 
 static TestFun tests[] = {
-    test1, test2, test3
+    test1, test2, test_shuffle, test__all_ones, test_fill
 };
 
 int main(int, char**)
