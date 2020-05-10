@@ -1,5 +1,5 @@
 /**
- * @brief C++ Header Library for Vector Types and Instructions.
+ * @brief C++ Header Library of Vector Types and Operations.
  * @author Igor Lesik 2020
  * @copyright Igor Lesik 2020
  *
@@ -45,12 +45,20 @@ typedef U64x8    V8ul;
 typedef uint32_t U32x2  __attribute__ ((vector_size (8)));
 typedef U32x2    V2ui;
 
-typedef float    Fx4    __attribute__ ((vector_size (16)));
-typedef Fx4      V4f;
+using Fx4 = float  VX_DECL(4, float);
+using V4f = Fx4;
 
-typedef double   Dx4    __attribute__ ((vector_size (32)));
-typedef Dx4      V4d;
+using Fx8 = float  VX_DECL(8, float);
+using V8f = Fx8;
 
+using Fx16 = float VX_DECL(16, float);
+using V16f = Fx16;
+
+using Dx4 = double VX_DECL(4, double);
+using V4d = Dx4;
+
+using Dx8 = double VX_DECL(8, double);
+using V8d = Dx8;
 
 union Vec128 {
     __m128i mm;
@@ -138,6 +146,7 @@ template <typename TTo, typename TFrom> TTo convert(TFrom a)
 }
 #endif
 
+// https://www.codeproject.com/Articles/874396/Crunching-Numbers-with-AVX-and-AVX
 //if AVX
 //static inline __m128i int128_fill_zero() {return _mm_setzero_si128(); }
 //static inline __m256i int256_fill_zero() {return _mm256_setzero_si256(); }
@@ -154,4 +163,27 @@ static inline void fill_zero(U32x16& v) {fill_zero((__m512i&)v);}
 static inline void fill_zero(U64x2& v) {fill_zero((__m128i&)v);}
 static inline void fill_zero(U64x4& v) {fill_zero((__m256i&)v);}
 static inline void fill_zero(U64x8& v) {fill_zero((__m512i&)v);}
+
+static inline void fill_zero(Fx4& v) {v = _mm_setzero_ps();}
+static inline void fill_zero(Fx8& v) {v = _mm256_setzero_ps();}
+static inline void fill_zero(Dx4& v) {v = _mm256_setzero_pd();}
+static inline void fill_zero(Dx8& v) {v = _mm512_setzero_pd();}
+
+static inline void fill(Fx4& v, float n) {v = _mm_set1_ps(n);}
+static inline void fill(Fx8& v, float n) {v = _mm256_set1_ps(n);}
+static inline void fill(Dx4& v, double n) {v = _mm256_set1_pd(n);}
+static inline void fill(Dx8& v, double n) {v = _mm512_set1_pd(n);}
+
+static inline void load(Fx4& v, const float* mem) {v = _mm_load_ps(mem);}
+static inline void load(Fx8& v, const float* mem) {v = _mm256_load_ps(mem);}
+static inline void load(Fx16& v, const float* mem) {v = _mm512_load_ps(mem);}
+
+static inline I8x16 add_saturated(I8x16 a, I8x16 b) {
+    __m128i va = ((Vec128){i8:a}).mm;
+    __m128i vb = ((Vec128){i8:b}).mm;
+    return ((Vec128){mm:_mm_adds_epi8(va, vb)}).i8;
+}
+
+static inline Fx4 madd(Fx4 a, Fx4 b, Fx4 c) {return _mm_fmadd_ps(a, b, c);}
+
 } // namespace vx
