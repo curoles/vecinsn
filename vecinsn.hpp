@@ -7,6 +7,9 @@
  * - https://gcc.gnu.org/onlinedocs/gcc/Vector-Extensions.html
  * - https://software.intel.com/sites/landingpage/IntrinsicsGuide
  *
+ */
+
+/*
  * @mainpage Introduction
  *
  * This C++ header-only library provides definitions for most common
@@ -137,8 +140,10 @@ template <typename T> bool equal(T a, T b)
 
 /// Compile-time function that returns number of elements.
 ///
+/// Example:
+/// ```c++
 /// static_assert(nrelem<U32x8>() == 8 and sizeof(U32x8) == 32);
-///
+/// ```
 template <typename T> constexpr unsigned nrelem()
 {
     return sizeof(T)/sizeof(VX_BASE_TYPE(T));
@@ -146,7 +151,8 @@ template <typename T> constexpr unsigned nrelem()
 
 /// Returns sum of all elements.
 ///
-/// ```
+/// Example:
+/// ```c++
 /// V4ui a = {1,2,3,4};
 /// assert(sum<uint32_t>(a) == (1+2+3+4));
 /// ```
@@ -163,6 +169,8 @@ template <typename Acc, typename T> Acc sum(T v)
     }
 }
 
+/// Returns one of two vectors based on a condition vector.
+///
 /// @return vector {cond[0]? a[0]:b[0], cond[1] ? a[1]:b[1],...}
 ///
 template <typename T> T select(T cond, T a, T b)
@@ -172,9 +180,10 @@ template <typename T> T select(T cond, T a, T b)
 
 /// Shuffle elements according to a rule.
 ///
+/// Example:
 /// ```c++
 /// Fx4 a = {1.1, 2.2, 3.3, 4.4};
-/// U32x4 mask = {3, 2, 1, 0};
+/// U32x4 mask = {3, 2, 1, 0}; // reverse order
 /// assert(equal(shuffle(a, mask),(Fx4){4.4, 3.3, 2.2, 1.1}));
 /// ```
 template <typename T, typename M> T shuffle(T a, M mask)
@@ -196,7 +205,7 @@ template <typename TTo, typename TFrom> TTo convert(TFrom a)
 
 static inline int test_all_ones(U64x2 v) {return _mm_test_all_ones((__m128i)v);}
 static inline int test_all_ones(I64x2 v) {return _mm_test_all_ones((__m128i)v);}
-static inline int test_all_ones(U32x4 v)  {return _mm_test_all_ones((__m128i)v);}
+static inline int test_all_ones(U32x4 v) {return _mm_test_all_ones((__m128i)v);}
 static inline int test_all_ones(I32x4 v) {return _mm_test_all_ones((__m128i)v);}
 static inline int test_all_ones(U16x8 v) {return _mm_test_all_ones((__m128i)v);}
 static inline int test_all_ones(I16x8 v) {return _mm_test_all_ones((__m128i)v);}
