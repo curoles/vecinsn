@@ -1,16 +1,34 @@
-/**
- * @brief C++ Header Library of Vector Types and Operations.
- * @author Igor Lesik 2020
+/**@file
+ * @brief     C++ Header Library of Vector Types and Operations.
+ * @author    Igor Lesik 2020
  * @copyright Igor Lesik 2020
  *
- * https://gcc.gnu.org/onlinedocs/gcc/Vector-Extensions.html
- * https://software.intel.com/sites/landingpage/IntrinsicsGuide
+ * References:
+ * - https://gcc.gnu.org/onlinedocs/gcc/Vector-Extensions.html
+ * - https://software.intel.com/sites/landingpage/IntrinsicsGuide
+ *
+ * @mainpage Introduction
+ *
+ * This C++ header-only library provides definitions for most common
+ * vector types and inline functions to operate on those types.
+ * This library relies on
+ * [GCC Vector Extentions](https://gcc.gnu.org/onlinedocs/gcc/Vector-Extensions.html)
+ * and architecture specific intrinsics header files,
+ * like `immintrin.h` from Intel.
+ *
+ * @section section-compile Compiling and running
+ *
+ * @attention Code compiled with options to enable support for vector instructions,
+ * for example, `-mavx` or `-msse4.1`, may not run on machine with CPU
+ * that does not support the vector instructions used to generate the program. 
  */
 #pragma once
 
 #include <cstdint>
 #include <immintrin.h>
 
+/// Namespace of all vector types and functions.
+///
 namespace vx {
 
 using uint128_t = __uint128_t;
@@ -19,7 +37,9 @@ using  int128_t =  __int128_t;
 #define VX_DECL(elcount, type)  __attribute__ ((vector_size (elcount*sizeof(type))))
 
 #define VX_DEF(type,mn,mn2,count) \
+/** Vector type[count] */ \
 using mn##x##count = type VX_DECL(count, type); \
+/** Vector type[count] */ \
 using V##count##mn2 = mn##x##count;
 
 #define VX_DEF2(type,mn,mn2) VX_DEF(type,mn,mn2,2)
@@ -85,7 +105,17 @@ template <typename T> constexpr T false_vec() { return (T){0}; }
 template <typename T> constexpr T true_vec() { return !false_vec<T>(); }
 
 /// Compare two vectors for equality.
+///
 /// @return true if all elements of two vectors are equal
+///
+/// Example:
+/// ```c++
+/// V4si a = {1,2,3,4};
+/// V4si b = {1,2,3,4};
+/// assert(equal(a, b));
+/// assert(equal(a - b, (V4si){0,0,0,0}));
+/// assert(equal(a + b, a * 2));
+/// ```
 template <typename T> bool equal(T a, T b)
 {
     T cmp = (a == b);
@@ -140,10 +170,13 @@ template <typename T> T select(T cond, T a, T b)
     return cond ? a:b;
 }
 
-///    Fx4 a = {1.1, 2.2, 3.3, 4.4};
-///    U32x4 mask = {3, 2, 1, 0};
-///    assert(equal(shuffle(a, mask),(Fx4){4.4, 3.3, 2.2, 1.1}));
+/// Shuffle elements according to a rule.
 ///
+/// ```c++
+/// Fx4 a = {1.1, 2.2, 3.3, 4.4};
+/// U32x4 mask = {3, 2, 1, 0};
+/// assert(equal(shuffle(a, mask),(Fx4){4.4, 3.3, 2.2, 1.1}));
+/// ```
 template <typename T, typename M> T shuffle(T a, M mask)
 {
     return __builtin_shuffle(a, mask);
