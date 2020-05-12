@@ -3,14 +3,6 @@
  * @author    Igor Lesik 2020
  * @copyright Igor Lesik 2020
  *
- * References:
- * - https://gcc.gnu.org/onlinedocs/gcc/Vector-Extensions.html
- * - https://software.intel.com/sites/landingpage/IntrinsicsGuide
- *
- */
-
-/*
- * @mainpage Introduction
  *
  * This C++ header-only library provides definitions for most common
  * vector types and inline functions to operate on those types.
@@ -19,11 +11,14 @@
  * and architecture specific intrinsics header files,
  * like `immintrin.h` from Intel.
  *
- * @section section-compile Compiling and running
- *
  * @attention Code compiled with options to enable support for vector instructions,
  * for example, `-mavx` or `-msse4.1`, may not run on machine with CPU
  * that does not support the vector instructions used to generate the program. 
+ *
+ * References:
+ * - https://gcc.gnu.org/onlinedocs/gcc/Vector-Extensions.html
+ * - https://software.intel.com/sites/landingpage/IntrinsicsGuide
+ *
  */
 #pragma once
 
@@ -99,6 +94,27 @@ union Vec512 {
     U32x16  u32; I32x16  i32;
     U64x8   u64; I64x8   i64;
     U128x4 u128; I128x4 i128;
+};
+
+/// Compile-time type maker.
+///
+/// Metaprogramming facility to dynamically construct Vector type in compile-time.
+/// ```c++
+/// vx::make<float,8>::type dyno;
+/// static_assert(std::is_same<vx::Fx8, decltype(dyno)>::value);
+/// ```
+///
+template <typename T, unsigned N> struct make {typedef void type;};
+template <> struct make<float, 2> {typedef vx::Fx2  type;};
+template <> struct make<float, 4> {typedef vx::Fx4  type;};
+template <> struct make<float, 8> {typedef vx::Fx8  type;};
+template <> struct make<float,16> {typedef vx::Fx16 type;};
+
+template <typename T, unsigned Cols, unsigned Rows = Cols>
+struct Matrix
+{
+    using row_type = vx::make<T, Cols>;
+    row_type m[Rows];
 };
 
 /// Returns 'false' vector {0,0,0,...}
@@ -233,6 +249,7 @@ static inline void fill_zero(__m512i& v) {v = _mm512_setzero_si512();}
 static inline void fill_zero(U32x2& v)  {fill_zero((__m64  &)v);}
 static inline void fill_zero(U32x4& v)  {fill_zero((__m128i&)v);}
 static inline void fill_zero(U32x8& v)  {fill_zero((__m256i&)v);}
+/// Set all bits of all element to 0.
 static inline void fill_zero(U32x16& v) {fill_zero((__m512i&)v);}
 
 static inline void fill_zero(U64x2& v) {fill_zero((__m128i&)v);}
@@ -244,6 +261,7 @@ static inline void fill_zero(Fx8& v) {v = _mm256_setzero_ps();}
 static inline void fill_zero(Dx4& v) {v = _mm256_setzero_pd();}
 static inline void fill_zero(Dx8& v) {v = _mm512_setzero_pd();}
 
+/// Set a single value to all elements.
 static inline void fill(Fx4& v, float n) {v = _mm_set1_ps(n);}
 static inline void fill(Fx8& v, float n) {v = _mm256_set1_ps(n);}
 static inline void fill(Dx4& v, double n) {v = _mm256_set1_pd(n);}
@@ -251,9 +269,15 @@ static inline void fill(Dx8& v, double n) {v = _mm512_set1_pd(n);}
 
 static inline void fill(U32x4& v, uint32_t n) {v = (U32x4)_mm_set1_epi32(n);}
 
+/// Load vector from memory.
 static inline void load(Fx4& v, const float* mem) {v = _mm_load_ps(mem);}
 static inline void load(Fx8& v, const float* mem) {v = _mm256_load_ps(mem);}
 static inline void load(Fx16& v, const float* mem) {v = _mm512_load_ps(mem);}
+
+/// Store vector to memory.
+static inline void store(float* mem, Fx4 v) {_mm_store_ps(mem, v);}
+
+
 
 static inline I8x16 add_saturated(I8x16 a, I8x16 b) {
     return (I8x16)_mm_adds_epi8((__m128i)a, (__m128i)b);

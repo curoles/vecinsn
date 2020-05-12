@@ -1,12 +1,22 @@
 #include <cstdlib>
 #include <cassert>
 #include <cstdio>
+#include <cstring>
+#include <type_traits>
 
 #include "vecinsn.hpp"
 
 using namespace vx;
 
-static bool test1()
+static bool test_type_maker()
+{
+    vx::make<float,8>::type dyno;
+    static_assert(std::is_same<vx::Fx8, decltype(dyno)>::value);
+
+    return true;
+}
+
+static bool test_normal_ops()
 {
     V4si a = {1,2,3,4};
     V4si b = {1,2,3,4};
@@ -28,7 +38,7 @@ static bool test1()
     return true;
 }
 
-static bool test2()
+static bool test_nrelem()
 {
     static_assert(nrelem<U32x2>() == 2 and sizeof(U32x2) ==  8);
     static_assert(nrelem<U32x4>() == 4 and sizeof(U32x4) == 16);
@@ -41,6 +51,11 @@ static bool test2()
     assert(equal(b + 1, (U32x2){2,3}));
     assert(!equal(b - 1, (U32x2){2,3}));
 
+    return true;
+}
+
+static bool test_logic()
+{
     assert(equal(false_vec<I32x4>(), (I32x4){0,0,0,0}));
     assert(equal(true_vec<I32x4>(), (I32x4){-1,-1,-1,-1}));
 
@@ -55,12 +70,16 @@ static bool test2()
 static bool test_shuffle()
 {
     Fx4 a = {1.1, 2.2, 3.3, 4.4};
-    U32x4 mask = {3, 2, 1, 0};
+    U32x4 mask = {3, 2, 1, 0}; // reverse order
     assert(equal(shuffle(a, mask),(Fx4){4.4, 3.3, 2.2, 1.1}));
 
     Fx4 b = {5.5, 6.6, 7.7, 8.8};
-    U32x4 mask2 = {3, 5, 6, 0};
+    U32x4 mask2 = {3, 5, 6, 0}; // 1st 4 from a, 2nd 4 from b
     assert(equal(shuffle(a, b, mask2),(Fx4){4.4, 6.6, 7.7, 1.1}));
+
+    // error: inner type must have the same size as inner type of the mask
+    //U8x4 mask3{0,2,1,3};
+    //assert(equal(shuffle(a, mask3),(Fx4){1.1, 3.3, 2.2, 4.4}));
 
 #if __GNUC__ > 8
     assert(equal(convert<I32x4>(a), (I32x4){1,2,3,4}));
@@ -95,6 +114,24 @@ static bool test_fill()
     assert(!test_all_ones(a));
     assert(equal(a, (U32x4){7,7,7,7}));
     assert(!equal(a, (U32x4){7,77,7,7}));
+    a[2] = 8; // set single element value
+    assert(equal(a, (U32x4){7,7,8,7}));
+
+    return true;
+}
+
+static bool test_load()
+{
+    Fx4 va;
+    float a[4] = {1.1,2.2,3.3,4.4};
+    vx::load(va, a);
+    assert(equal(va, (Fx4){1.1,2.2,3.3,4.4}));
+    a[1] = 22.22;
+    std::memcpy(&va, a, sizeof va); // memcpy also works
+    assert(equal(va, (Fx4){1.1,22.22,3.3,4.4}));
+    va[2] = 33.33;
+    vx::store(a, va);
+    assert(a[2] == va[2]);
 
     return true;
 }
@@ -102,7 +139,9 @@ static bool test_fill()
 using TestFun = bool (*)();
 
 static TestFun tests[] = {
-    test1, test2, test_shuffle, test__all_ones, test_fill
+    test_type_maker, test_normal_ops, test_nrelem, test_logic,
+    test_shuffle, test__all_ones, test_fill,
+    test_load
 };
 
 int main(int, char**)
