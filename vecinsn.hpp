@@ -61,6 +61,15 @@ VX_DEF4 ( int128_t,I128,sq)
 VX_DEF16( float,F,f)
 VX_DEF8 (double,D,d)
 
+#undef VX_DECL
+#undef VX_DEF
+#undef VX_DEF2
+#undef VX_DEF4
+#undef VX_DEF8
+#undef VX_DEF16
+#undef VX_DEF32
+#undef VX_DEF64
+
 union Vec64 {
     __m64 mm;
     U8x8     u8; I8x8   i8;
@@ -109,13 +118,8 @@ template <> struct make<float, 2> {typedef vx::Fx2  type;};
 template <> struct make<float, 4> {typedef vx::Fx4  type;};
 template <> struct make<float, 8> {typedef vx::Fx8  type;};
 template <> struct make<float,16> {typedef vx::Fx16 type;};
+template <> struct make<int16_t, 4> {typedef vx::I16x4 type;};
 
-template <typename T, unsigned Cols, unsigned Rows = Cols>
-struct Matrix
-{
-    using row_type = vx::make<T, Cols>;
-    row_type m[Rows];
-};
 
 /// Returns 'false' vector {0,0,0,...}
 template <typename T> constexpr T false_vec() { return (T){0}; }
@@ -152,7 +156,19 @@ template <typename T> bool equal(T a, T b)
     }
 }
 
-#define VX_BASE_TYPE(T) decltype(((T){})[0])
+// Do *NOT* use this macro, use vx::get_base<T>::type
+//#define VX_BASE_TYPE(T) decltype(((T){})[0])
+
+/// Get base type of vector.
+///
+/// Example:
+/// ```c++
+/// template <typename T> constexpr unsigned nrelem()
+/// {
+///     return sizeof(T)/sizeof(typename get_base<T>::type);
+/// }
+/// ```
+template <typename T> struct get_base {typedef decltype(((T){})[0]) type;};
 
 /// Compile-time function that returns number of elements.
 ///
@@ -162,7 +178,7 @@ template <typename T> bool equal(T a, T b)
 /// ```
 template <typename T> constexpr unsigned nrelem()
 {
-    return sizeof(T)/sizeof(VX_BASE_TYPE(T));
+    return sizeof(T)/sizeof(typename get_base<T>::type);
 }
 
 /// Returns sum of all elements.
@@ -219,6 +235,7 @@ template <typename TTo, typename TFrom> TTo convert(TFrom a)
 }
 #endif
 
+/// Test all bits of all elements are 1.
 static inline int test_all_ones(U64x2 v) {return _mm_test_all_ones((__m128i)v);}
 static inline int test_all_ones(I64x2 v) {return _mm_test_all_ones((__m128i)v);}
 static inline int test_all_ones(U32x4 v) {return _mm_test_all_ones((__m128i)v);}
@@ -230,6 +247,7 @@ static inline int test_all_ones(I8x16 v) {return _mm_test_all_ones((__m128i)v);}
 static inline int test_all_ones(Fx4   v) {return _mm_test_all_ones((__m128i)v);}
 static inline int test_all_ones(Dx2   v) {return _mm_test_all_ones((__m128i)v);}
 
+/// Test all bits of all elements are 0.
 static inline int test_all_zeros(U64x2 v, uint128_t m = -1) {return _mm_test_all_zeros((__m128i)v, (__m128i)m);}
 static inline int test_all_zeros(I64x2 v, uint128_t m = -1) {return _mm_test_all_zeros((__m128i)v, (__m128i)m);}
 static inline int test_all_zeros(U32x4 v, uint128_t m = -1) {return _mm_test_all_zeros((__m128i)v, (__m128i)m);}
@@ -246,10 +264,10 @@ static inline void fill_zero(__m128i& v) {v = _mm_setzero_si128();}
 static inline void fill_zero(__m256i& v) {v = _mm256_setzero_si256();}
 static inline void fill_zero(__m512i& v) {v = _mm512_setzero_si512();}
 
-static inline void fill_zero(U32x2& v)  {fill_zero((__m64  &)v);}
+/// Set all bits of all elements to 0.
 static inline void fill_zero(U32x4& v)  {fill_zero((__m128i&)v);}
+static inline void fill_zero(U32x2& v)  {fill_zero((__m64  &)v);}
 static inline void fill_zero(U32x8& v)  {fill_zero((__m256i&)v);}
-/// Set all bits of all element to 0.
 static inline void fill_zero(U32x16& v) {fill_zero((__m512i&)v);}
 
 static inline void fill_zero(U64x2& v) {fill_zero((__m128i&)v);}
@@ -278,11 +296,58 @@ static inline void load(Fx16& v, const float* mem) {v = _mm512_load_ps(mem);}
 static inline void store(float* mem, Fx4 v) {_mm_store_ps(mem, v);}
 
 
+static inline I8x8  add(I8x8  a, I8x8  b) {return (I8x8) _mm_add_pi8 ((__m64)a, (__m64)b);}
+static inline I16x4 add(I16x4 a, I16x4 b) {return (I16x4)_mm_add_pi16((__m64)a, (__m64)b);}
+static inline I32x2 add(I32x2 a, I32x2 b) {return (I32x2)_mm_add_pi32((__m64)a, (__m64)b);}
 
-static inline I8x16 add_saturated(I8x16 a, I8x16 b) {
-    return (I8x16)_mm_adds_epi8((__m128i)a, (__m128i)b);
-}
+static inline I8x8  sub(I8x8  a, I8x8  b) {return (I8x8) _mm_sub_pi8 ((__m64)a, (__m64)b);}
+static inline I16x4 sub(I16x4 a, I16x4 b) {return (I16x4)_mm_sub_pi16((__m64)a, (__m64)b);}
+static inline I32x2 sub(I32x2 a, I32x2 b) {return (I32x2)_mm_sub_pi32((__m64)a, (__m64)b);}
+
+static inline I8x8  add_saturated(I8x8  a, I8x8  b) {return (I8x8)_mm_adds_pi8((__m64)a, (__m64)b);}
+static inline U8x8  add_saturated(U8x8  a, U8x8  b) {return (U8x8)_mm_adds_pu8((__m64)a, (__m64)b);}
+static inline I16x4 add_saturated(I16x4 a, I16x4 b) {return (I16x4)_mm_adds_pi16((__m64)a, (__m64)b);}
+static inline U16x4 add_saturated(U16x4 a, U16x4 b) {return (U16x4)_mm_adds_pu16((__m64)a, (__m64)b);}
+
+static inline I8x16 add_saturated(I8x16 a, I8x16 b) {return (I8x16)_mm_adds_epi8((__m128i)a, (__m128i)b);}
 
 static inline Fx4 madd(Fx4 a, Fx4 b, Fx4 c) {return _mm_fmadd_ps(a, b, c);}
+
+/// Array of vectors that pretends to be a long vector.
+///
+template <typename T, unsigned PSz, unsigned Cnt>
+struct Array
+{
+    static constexpr unsigned Sz = PSz * Cnt; ///< total size, number of all elements
+    using pv_type = typename vx::make<T, PSz>::type; ///< type of the packed vector
+
+    pv_type ar[Cnt];
+
+    /// Returns reference to n-th element.
+    T& operator[](unsigned int i) { return ar[i/PSz][i%PSz]; }
+
+    /// Adds `this[n] += other[n]`.
+    ///
+    /// ```c++
+    /// vx::Array<int16_t, 4, 2> a {ar: {{1,2,3,4},{5,6,7,8}}};
+    /// vx::Array<int16_t, 4, 2> b {ar: {{4,3,2,1},{8,7,5,6}}};
+    /// a.add(b);
+    /// assert(a[6] == (7+5));
+    /// ```
+    void add(const Array& other) {
+        for (unsigned chunk = 0; chunk < Cnt; ++chunk) {
+            ar[chunk] = vx::add(ar[chunk], other.ar[chunk]);
+        }
+    }
+
+    /// Subs `this[n] -= other[n]`.
+    void sub(const Array& other) {
+        for (unsigned chunk = 0; chunk < Cnt; ++chunk) {
+            ar[chunk] = vx::sub(ar[chunk], other.ar[chunk]);
+        }
+    }
+
+};
+
 
 } // namespace vx

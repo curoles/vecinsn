@@ -11,7 +11,7 @@ like `immintrin.h` from Intel.
 See Doxygen generated API documentation
 at https://github.com/curoles/vecinsn/blob/master/README.pdf
 
-To use this library include file `vecinsn.hpp` into one of your C++ files.
+To use this _Library_ include file `vecinsn.hpp` into one of your C++ files.
 Note that some inlined functions from `immintrin.h` and files it includes
 require compiler flags to enable SIMD instructions, use at least `-msse4.1`.
 
@@ -20,6 +20,8 @@ require compiler flags to enable SIMD instructions, use at least `-msse4.1`.
 > for example, `-mavx` or `-msse4.1`, will **NOT** run on a machine with CPU
 > that does not support that vector instructions used to generate the program,
 > even if it is the machine where the program was compiled. 
+
+All _Library_ types and functions belong to C++ namespace `vx::`.
 
 There are 2 naming conventions for vector types:
 
