@@ -1,8 +1,10 @@
 CXXFLAGS := -std=c++17 -Wall -Wextra -Werror
 CXXFLAGS += -finline-functions -fcompare-debug-second
-CXXFLAGS += -msse4.1
+CXXFLAGS += -march=native #-msse4.1
 
-test.out: test.cpp vecinsn.hpp
+SRC = vxtypes.hpp vxops.hpp vxarray.hpp
+
+test.out: test.cpp $(SRC)
 	g++ -O3 $(CXXFLAGS) $< -o $@
 	./$@
 	rm ./$@

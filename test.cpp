@@ -4,7 +4,9 @@
 #include <cstring>
 #include <type_traits>
 
-#include "vecinsn.hpp"
+#include "vxtypes.hpp"
+#include "vxops.hpp"
+#include "vxarray.hpp"
 
 using namespace vx;
 
