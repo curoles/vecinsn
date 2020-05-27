@@ -87,10 +87,13 @@ static inline void store(float* mem, Fx4 v) {_mm_store_ps(mem, v);}
 static inline I8x8  add(I8x8  a, I8x8  b) {return (I8x8) _mm_add_pi8 ((__m64)a, (__m64)b);}
 static inline I16x4 add(I16x4 a, I16x4 b) {return (I16x4)_mm_add_pi16((__m64)a, (__m64)b);}
 static inline I32x2 add(I32x2 a, I32x2 b) {return (I32x2)_mm_add_pi32((__m64)a, (__m64)b);}
+static inline I64x2 add(const I64x2 a, const I64x2 b) {return (I64x2)_mm_add_epi64((__m128i)a, (__m128i)b);}
+static inline Dx2   add(const Dx2 a, const Dx2 b) {return (Dx2)_mm_add_pd((__m128d)a, (__m128d)b);}
 
 static inline I8x8  sub(I8x8  a, I8x8  b) {return (I8x8) _mm_sub_pi8 ((__m64)a, (__m64)b);}
 static inline I16x4 sub(I16x4 a, I16x4 b) {return (I16x4)_mm_sub_pi16((__m64)a, (__m64)b);}
 static inline I32x2 sub(I32x2 a, I32x2 b) {return (I32x2)_mm_sub_pi32((__m64)a, (__m64)b);}
+static inline Dx2   sub(const Dx2 a, const Dx2 b) {return (Dx2)_mm_sub_pd((__m128d)a, (__m128d)b);}
 
 static inline I8x8  add_saturated(I8x8  a, I8x8  b) {return (I8x8)_mm_adds_pi8((__m64)a, (__m64)b);}
 static inline U8x8  add_saturated(U8x8  a, U8x8  b) {return (U8x8)_mm_adds_pu8((__m64)a, (__m64)b);}
@@ -98,6 +101,9 @@ static inline I16x4 add_saturated(I16x4 a, I16x4 b) {return (I16x4)_mm_adds_pi16
 static inline U16x4 add_saturated(U16x4 a, U16x4 b) {return (U16x4)_mm_adds_pu16((__m64)a, (__m64)b);}
 
 static inline I8x16 add_saturated(I8x16 a, I8x16 b) {return (I8x16)_mm_adds_epi8((__m128i)a, (__m128i)b);}
+
+
+static inline Dx2 mul(const Dx2 a, const Dx2 b) {return (Dx2)_mm_mul_pd((__m128d)a, (__m128d)b);}
 
 static inline Fx4 madd(Fx4 a, Fx4 b, Fx4 c) {return _mm_fmadd_ps(a, b, c);}
 
