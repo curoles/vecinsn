@@ -6,6 +6,7 @@
 
 #include "vxtypes.hpp"
 #include "vxops.hpp"
+#include "vxadvops.hpp"
 #include "vxarray.hpp"
 #include "vxcomplex.hpp"
 
@@ -188,6 +189,22 @@ static bool test_complex2()
     return true;
 }
 
+static bool test_dot()
+{
+#ifdef __AVX__
+    Dx4 a{1,2,3,4};
+    Dx4 b{5,6,7,8};
+    double c = vx::dot<double>(a, b);
+    assert(c == (1.0*5.0 + 2.0*6.0 + 3.0*7.0 + 4.0*8.0));
+#else
+    Dx2 a{1,2};
+    Dx2 b{5,6,};
+    double c = vx::dot<double>(a, b);
+    assert(c == (1.0*5.0 + 2.0*6.0));
+#endif
+    return true;
+}
+
 using TestFun = bool (*)();
 
 static TestFun tests[] = {
@@ -195,7 +212,8 @@ static TestFun tests[] = {
     test_shuffle, test__all_ones, test_fill,
     test_load,
     test_array,
-    test_complex1, test_complex2
+    test_complex1, test_complex2,
+    test_dot
 };
 
 int main(int, char**)

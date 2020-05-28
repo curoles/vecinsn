@@ -104,6 +104,9 @@ static inline I8x16 add_saturated(I8x16 a, I8x16 b) {return (I8x16)_mm_adds_epi8
 
 
 static inline Dx2 mul(const Dx2 a, const Dx2 b) {return (Dx2)_mm_mul_pd((__m128d)a, (__m128d)b);}
+#ifdef __AVX__
+static inline Dx4 mul(const Dx4 a, const Dx4 b) {return (Dx4)_mm256_mul_pd((__m256d)a, (__m256d)b);}
+#endif
 
 static inline Fx4 madd(Fx4 a, Fx4 b, Fx4 c) {return _mm_fmadd_ps(a, b, c);}
 

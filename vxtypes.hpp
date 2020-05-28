@@ -182,25 +182,6 @@ template <typename T> constexpr unsigned nrelem()
     return sizeof(T)/sizeof(typename get_base<T>::type);
 }
 
-/// Returns sum of all elements.
-///
-/// Example:
-/// ```c++
-/// V4ui a = {1,2,3,4};
-/// assert(sum<uint32_t>(a) == (1+2+3+4));
-/// ```
-template <typename Acc, typename T> Acc sum(T v)
-{
-    if constexpr(nrelem<T>() == 8) {
-        return (Acc)v[0] + v[1] + v[2] + v[3] + v[4] + v[5] + v[6] + v[7];
-    }
-    else if constexpr(nrelem<T>() == 4) {
-        return (Acc)v[0] + v[1] + v[2] + v[3];
-    }
-    else if constexpr(nrelem<T>() == 2) {
-        return (Acc)v[0] + v[1];
-    }
-}
 
 /// Returns one of two vectors based on a condition vector.
 ///
