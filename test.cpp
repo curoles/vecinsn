@@ -205,6 +205,20 @@ static bool test_dot()
     return true;
 }
 
+static bool test_inverse()
+{
+    I32x4 a{1,-2,3,-4};
+    I32x4 a_inv = vx::inverse(a);
+    assert(vx::equal(a_inv, I32x4{-1,2,-3,4}));
+
+    Fx4 b{1,-2,3,-4};
+    Fx4 b_inv = vx::inverse(b);
+    assert(vx::equal(b_inv, Fx4{-1,2,-3,4}));
+
+    return true;
+}
+
+
 using TestFun = bool (*)();
 
 static TestFun tests[] = {
@@ -213,7 +227,7 @@ static TestFun tests[] = {
     test_load,
     test_array,
     test_complex1, test_complex2,
-    test_dot
+    test_dot, test_inverse
 };
 
 int main(int, char**)

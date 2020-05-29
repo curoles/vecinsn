@@ -52,6 +52,15 @@ Acc dot(const V& v1, const V& v2)
     return sum<Acc,V>(v);
 }
 
+/// Change sign: a -> -a
+template <typename V>
+V inverse(const V& v)
+{
+    V zero;
+    vx::fill_zero(zero);
+
+    return vx::sub(zero, v); // 0 - a == -a
+}
 
 } //namespace vx
 

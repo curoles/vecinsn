@@ -47,20 +47,25 @@ static inline int test_all_zeros(I8x16 v, uint128_t m = -1) {return _mm_test_all
 static inline int test_all_zeros(Fx4   v, uint128_t m = -1) {return _mm_test_all_zeros((__m128i)v, (__m128i)m);}
 static inline int test_all_zeros(Dx2   v, uint128_t m = -1) {return _mm_test_all_zeros((__m128i)v, (__m128i)m);}
 
-static inline void fill_zero(__m64&   v) {v = _mm_setzero_si64();}
-static inline void fill_zero(__m128i& v) {v = _mm_setzero_si128();}
-static inline void fill_zero(__m256i& v) {v = _mm256_setzero_si256();}
-static inline void fill_zero(__m512i& v) {v = _mm512_setzero_si512();}
+static inline void fill_zero_(__m64&   v) {v = _mm_setzero_si64();}
+static inline void fill_zero_(__m128i& v) {v = _mm_setzero_si128();}
+static inline void fill_zero_(__m256i& v) {v = _mm256_setzero_si256();}
+static inline void fill_zero_(__m512i& v) {v = _mm512_setzero_si512();}
 
 /// Set all bits of all elements to 0.
-static inline void fill_zero(U32x4& v)  {fill_zero((__m128i&)v);}
-static inline void fill_zero(U32x2& v)  {fill_zero((__m64  &)v);}
-static inline void fill_zero(U32x8& v)  {fill_zero((__m256i&)v);}
-static inline void fill_zero(U32x16& v) {fill_zero((__m512i&)v);}
+static inline void fill_zero(U32x2& v)  {fill_zero_((__m64  &)v);}
+static inline void fill_zero(U32x4& v)  {fill_zero_((__m128i&)v);}
+static inline void fill_zero(U32x8& v)  {fill_zero_((__m256i&)v);}
+static inline void fill_zero(U32x16& v) {fill_zero_((__m512i&)v);}
 
-static inline void fill_zero(U64x2& v) {fill_zero((__m128i&)v);}
-static inline void fill_zero(U64x4& v) {fill_zero((__m256i&)v);}
-static inline void fill_zero(U64x8& v) {fill_zero((__m512i&)v);}
+static inline void fill_zero(I32x2& v)  {fill_zero_((__m64  &)v);}
+static inline void fill_zero(I32x4& v)  {fill_zero_((__m128i&)v);}
+static inline void fill_zero(I32x8& v)  {fill_zero_((__m256i&)v);}
+static inline void fill_zero(I32x16& v) {fill_zero_((__m512i&)v);}
+
+static inline void fill_zero(U64x2& v) {fill_zero_((__m128i&)v);}
+static inline void fill_zero(U64x4& v) {fill_zero_((__m256i&)v);}
+static inline void fill_zero(U64x8& v) {fill_zero_((__m512i&)v);}
 
 static inline void fill_zero(Fx4& v) {v = _mm_setzero_ps();}
 static inline void fill_zero(Fx8& v) {v = _mm256_setzero_ps();}
@@ -93,7 +98,9 @@ static inline Dx2   add(const Dx2 a, const Dx2 b) {return (Dx2)_mm_add_pd((__m12
 static inline I8x8  sub(I8x8  a, I8x8  b) {return (I8x8) _mm_sub_pi8 ((__m64)a, (__m64)b);}
 static inline I16x4 sub(I16x4 a, I16x4 b) {return (I16x4)_mm_sub_pi16((__m64)a, (__m64)b);}
 static inline I32x2 sub(I32x2 a, I32x2 b) {return (I32x2)_mm_sub_pi32((__m64)a, (__m64)b);}
+static inline I32x4 sub(I32x4 a, I32x4 b) {return (I32x4)_mm_sub_epi32((__m128i)a, (__m128i)b);}
 static inline Dx2   sub(const Dx2 a, const Dx2 b) {return (Dx2)_mm_sub_pd((__m128d)a, (__m128d)b);}
+static inline Fx4   sub(const Fx4 a, const Fx4 b) {return (Fx4)_mm_sub_ps((__m128)a, (__m128)b);}
 
 static inline I8x8  add_saturated(I8x8  a, I8x8  b) {return (I8x8)_mm_adds_pi8((__m64)a, (__m64)b);}
 static inline U8x8  add_saturated(U8x8  a, U8x8  b) {return (U8x8)_mm_adds_pu8((__m64)a, (__m64)b);}
@@ -111,5 +118,6 @@ static inline Dx4 mul(const Dx4 a, const Dx4 b) {return (Dx4)_mm256_mul_pd((__m2
 static inline Fx4 madd(Fx4 a, Fx4 b, Fx4 c) {return _mm_fmadd_ps(a, b, c);}
 
 
+static inline Dx2 sqrt(const Dx2 a) {return (Dx2)_mm_sqrt_pd((__m128d)a);}
 
 } // namespace vx
