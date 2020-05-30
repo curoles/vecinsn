@@ -4,11 +4,11 @@
 #include <cstring>
 #include <type_traits>
 
-#include "vxtypes.hpp"
-#include "vxops.hpp"
-#include "vxadvops.hpp"
-#include "vxarray.hpp"
-#include "vxcomplex.hpp"
+#include "vx/vxtypes.hpp"
+#include "vx/vxops.hpp"
+#include "vx/vxadvops.hpp"
+#include "vx/vxarray.hpp"
+#include "vx/vxcomplex.hpp"
 
 using namespace vx;
 
