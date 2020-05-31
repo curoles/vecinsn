@@ -161,11 +161,11 @@ static bool test_array()
 
 static bool test_complex1()
 {
-    using CV = vx::cmplx::Complex<I64x2>;
+    using CV = vx::cx::Complex<I64x2>;
     CV v1{real: {1,2}, img:{3,4}};
     CV v2{real: {5,6}, img:{7,8}};
 
-    CV v3 = vx::cmplx::add(v1, v2);
+    CV v3 = vx::cx::add(v1, v2);
     assert(v3.real[0] == 1+5 and v3.real[1] == 2+6);
     assert(v3.img [0] == 3+7 and v3.img[1]  == 4+8);
 
@@ -174,15 +174,15 @@ static bool test_complex1()
 
 static bool test_complex2()
 {
-    using CV = vx::cmplx::Complex<Dx2>;
+    using CV = vx::cx::Complex<Dx2>;
     CV v1{real: {1,2}, img:{3,4}};
     CV v2{real: {5,6}, img:{7,8}};
 
-    CV v3 = vx::cmplx::add(v1, v2);
+    CV v3 = vx::cx::add(v1, v2);
     assert(v3.real[0] == 1+5 and v3.real[1] == 2+6);
     assert(v3.img [0] == 3+7 and v3.img[1]  == 4+8);
 
-    CV v4 = vx::cmplx::mul(v1, v2);
+    CV v4 = vx::cx::mul(v1, v2);
     assert(v4.real[0] == (1.0*5 - 3.0*7));
     assert(v4.img [0] == (1.0*7 + 5.0*3));
 

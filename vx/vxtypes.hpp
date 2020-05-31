@@ -115,12 +115,12 @@ union Vec512 {
 /// ```
 ///
 template <typename T, unsigned N> struct make {typedef void type;};
-template <> struct make<float, 2> {typedef vx::Fx2  type;};
-template <> struct make<float, 4> {typedef vx::Fx4  type;};
-template <> struct make<float, 8> {typedef vx::Fx8  type;};
-template <> struct make<float,16> {typedef vx::Fx16 type;};
+template <> struct make<float,  2> {typedef vx::Fx2  type;};
+template <> struct make<float,  4> {typedef vx::Fx4  type;};
+template <> struct make<float,  8> {typedef vx::Fx8  type;};
+template <> struct make<float, 16> {typedef vx::Fx16 type;};
+template <> struct make<double, 2> {typedef vx::Dx2  type;};
 template <> struct make<int16_t, 4> {typedef vx::I16x4 type;};
-
 
 /// Returns 'false' vector {0,0,0,...}
 template <typename T> constexpr T false_vec() { return (T){0}; }

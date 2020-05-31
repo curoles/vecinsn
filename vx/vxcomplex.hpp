@@ -9,7 +9,7 @@
 #include "vxtypes.hpp"
 #include "vxops.hpp"
 
-namespace vx::cmplx {
+namespace vx::cx {
 
 template <typename V>
 struct Complex
@@ -128,4 +128,4 @@ CV::type modulus(const CV& cv)
 
 //mul_scalar
 
-} //namespace vx::cmplx
+} //namespace vx::cx

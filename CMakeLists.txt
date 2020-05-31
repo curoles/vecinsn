@@ -36,12 +36,13 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(VX_CXX_FLAGS "-finline-functions -fcompare-debug-second -march=native")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 ${VX_CXX_FLAGS} -Werror -Wall -Wextra -I${VX_SOURCE_DIR}")
 
+include_directories(.)
+
 add_executable (test_basic test/test_basic.cpp)
+add_executable (test_matrix test/test_matrix.cpp)
 
 # After enablig testing we can do `make test`
 enable_testing()
 
-add_test(NAME basic
-    COMMAND test_basic
-)
-
+add_test(NAME basic COMMAND test_basic)
+add_test(NAME matrix COMMAND test_matrix)

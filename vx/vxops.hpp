@@ -84,10 +84,11 @@ static inline void fill(U32x4& v, uint32_t n) {v = (U32x4)_mm_set1_epi32(n);}
 static inline void load(Fx4& v, const float* mem) {v = _mm_load_ps(mem);}
 static inline void load(Fx8& v, const float* mem) {v = _mm256_load_ps(mem);}
 static inline void load(Fx16& v, const float* mem) {v = _mm512_load_ps(mem);}
+static inline void load(Dx2& v, const double* mem) {v = _mm_load_pd(mem);}
 
 /// Store vector to memory.
-static inline void store(float* mem, Fx4 v) {_mm_store_ps(mem, v);}
-
+static inline void store(float* mem, const Fx4& v) {_mm_store_ps(mem, v);}
+static inline void store(double* mem, const Dx2& v) {_mm_store_pd(mem, v);}
 
 static inline I8x8  add(I8x8  a, I8x8  b) {return (I8x8) _mm_add_pi8 ((__m64)a, (__m64)b);}
 static inline I16x4 add(I16x4 a, I16x4 b) {return (I16x4)_mm_add_pi16((__m64)a, (__m64)b);}
