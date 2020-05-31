@@ -8,9 +8,6 @@ This library relies on
 and architecture specific intrinsics header files,
 like `immintrin.h` from Intel.
 
-See Doxygen generated API documentation
-at https://github.com/curoles/vecinsn/blob/master/README.pdf
-
 To use this _Library_ include file `vecinsn.hpp` into one of your C++ files.
 Note that some inlined functions from `immintrin.h` and files it includes
 require compiler flags to enable SIMD instructions, use at least `-msse4.1`.

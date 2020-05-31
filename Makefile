@@ -5,8 +5,8 @@ CXXFLAGS += -march=native #-msse4.1
 SRC := vx/vxtypes.hpp vx/vxops.hpp vx/vxadvops.hpp vx/vxarray.hpp
 SRC += vx/vxcomplex.hpp
 
-test.out: test.cpp $(SRC)
-	g++ -O3 $(CXXFLAGS) $< -o $@
+test.out: test/test_basic.cpp $(SRC)
+	g++ -O3 $(CXXFLAGS) -I. $< -o $@
 	./$@
 	rm ./$@
 
