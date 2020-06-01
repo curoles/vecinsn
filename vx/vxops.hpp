@@ -85,10 +85,16 @@ static inline void load(Fx4& v, const float* mem) {v = _mm_load_ps(mem);}
 static inline void load(Fx8& v, const float* mem) {v = _mm256_load_ps(mem);}
 static inline void load(Fx16& v, const float* mem) {v = _mm512_load_ps(mem);}
 static inline void load(Dx2& v, const double* mem) {v = _mm_load_pd(mem);}
+#ifdef __AVX__
+static inline void load(Dx4& v, const double* mem) {v = _mm256_load_pd(mem);}
+static inline void load(Dx8& v, const double* mem) {v = _mm512_load_pd(mem);}
+#endif
 
 /// Store vector to memory.
 static inline void store(float* mem, const Fx4& v) {_mm_store_ps(mem, v);}
 static inline void store(double* mem, const Dx2& v) {_mm_store_pd(mem, v);}
+static inline void store(double* mem, const Dx4& v) {_mm256_store_pd(mem, v);}
+static inline void store(double* mem, const Dx8& v) {_mm512_store_pd(mem, v);}
 
 static inline I8x8  add(I8x8  a, I8x8  b) {return (I8x8) _mm_add_pi8 ((__m64)a, (__m64)b);}
 static inline I16x4 add(I16x4 a, I16x4 b) {return (I16x4)_mm_add_pi16((__m64)a, (__m64)b);}
@@ -120,5 +126,9 @@ static inline Fx4 madd(Fx4 a, Fx4 b, Fx4 c) {return _mm_fmadd_ps(a, b, c);}
 
 
 static inline Dx2 sqrt(const Dx2 a) {return (Dx2)_mm_sqrt_pd((__m128d)a);}
+
+static inline void load_gather(Dx2& v, const double* base_addr, I64x2 vindex, const int scale=1) {
+    v = _mm_i64gather_pd(base_addr, (__m128i)vindex, scale);
+}
 
 } // namespace vx
