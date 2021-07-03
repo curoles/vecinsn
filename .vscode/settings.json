@@ -1,0 +1,6 @@
+{
+    "files.autoSave": "afterDelay",
+    "cmake.buildDirectory": "${workspaceFolder}/../build",
+    "cmake.buildBeforeRun": false,
+    "cmake.configureOnEdit": false
+}
