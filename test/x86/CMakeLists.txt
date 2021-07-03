@@ -1,7 +1,14 @@
+#message(STATUS "CMAKE_CXX_FLAGS:" ${CMAKE_CXX_FLAGS})
+
 add_executable(test_x86_type_maker
   ${CMAKE_CURRENT_SOURCE_DIR}/test_type_maker.cpp
 )
 add_test(NAME x86-type-maker COMMAND test_x86_type_maker)
+
+add_executable(test_x86_nrelem
+  ${CMAKE_CURRENT_SOURCE_DIR}/test_nrelem.cpp
+)
+add_test(NAME x86-nrelem COMMAND test_x86_nrelem)
 
 #add_executable (test_basic test/test_basic.cpp)
 #add_executable (test_matrix test/test_matrix.cpp)

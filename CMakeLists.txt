@@ -15,5 +15,7 @@ include_directories(.)
 
 enable_testing()
 
+include(compile.cmake)
+
 add_subdirectory(vx)
 add_subdirectory(test)
