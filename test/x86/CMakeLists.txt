@@ -15,6 +15,11 @@ add_executable(test_x86_all_zero
 )
 add_test(NAME x86-all-zero COMMAND test_x86_all_zero)
 
+add_executable(test_x86_fill
+  ${CMAKE_CURRENT_SOURCE_DIR}/../generic/test_fill.cpp
+)
+add_test(NAME x86-fill COMMAND test_x86_fill)
+
 #add_executable (test_basic test/test_basic.cpp)
 #add_executable (test_matrix test/test_matrix.cpp)
 
