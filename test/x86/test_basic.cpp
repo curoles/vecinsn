@@ -12,16 +12,7 @@
 
 using namespace vx;
 
-static bool test_type_maker()
-{
-    vx::make<float,8>::type dyno;
-    static_assert(std::is_same<vx::Fx8, decltype(dyno)>::value);
 
-    vx::make<int16_t,4>::type dyno2;
-    static_assert(std::is_same<vx::I16x4, decltype(dyno2)>::value);
-
-    return true;
-}
 
 static bool test_normal_ops()
 {
