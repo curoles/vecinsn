@@ -48,19 +48,19 @@ using V##count##mn2 = mn##x##count;
 #define VX_DEF32(type,mn,mn2) VX_DEF(type,mn,mn2,32) VX_DEF16(type,mn,mn2)
 #define VX_DEF64(type,mn,mn2) VX_DEF(type,mn,mn2,64) VX_DEF32(type,mn,mn2)
 
-VX_DEF64( uint8_t, U8,ub)
-VX_DEF64(  int8_t, I8,sb)
-VX_DEF32(uint16_t,U16,uh)
-VX_DEF32( int16_t,I16,sh)
-VX_DEF16(uint32_t,U32,ui)
-VX_DEF16( int32_t,I32,si)
-VX_DEF8 (uint64_t,U64,ul)
-VX_DEF8 ( int64_t,I64,sl)
+VX_DEF64(  uint8_t,  U8,ub)
+VX_DEF64(   int8_t,  I8,sb)
+VX_DEF32( uint16_t, U16,uh)
+VX_DEF32(  int16_t, I16,sh)
+VX_DEF16( uint32_t, U32,ui)
+VX_DEF16(  int32_t, I32,si)
+VX_DEF8 ( uint64_t, U64,ul)
+VX_DEF8 (  int64_t, I64,sl)
 VX_DEF4 (uint128_t,U128,uq)
 VX_DEF4 ( int128_t,I128,sq)
 
-VX_DEF16( float,F,f)
-VX_DEF8 (double,D,d)
+VX_DEF16( float,F32,f)
+VX_DEF8 (double,F64,d)
 
 #undef VX_DECL
 #undef VX_DEF
@@ -115,14 +115,15 @@ union Vec512 {
 /// ```
 ///
 template <typename T, unsigned N> struct make {typedef void type;};
-template <> struct make<float,  2> {typedef vx::Fx2  type;};
-template <> struct make<float,  4> {typedef vx::Fx4  type;};
-template <> struct make<float,  8> {typedef vx::Fx8  type;};
-template <> struct make<float, 16> {typedef vx::Fx16 type;};
-template <> struct make<double, 2> {typedef vx::Dx2  type;};
-template <> struct make<double, 4> {typedef vx::Dx4  type;};
-template <> struct make<double, 8> {typedef vx::Dx8  type;};
+template <> struct make<float,  2> {typedef vx::F32x2  type;};
+template <> struct make<float,  4> {typedef vx::F32x4  type;};
+template <> struct make<float,  8> {typedef vx::F32x8  type;};
+template <> struct make<float, 16> {typedef vx::F32x16 type;};
+template <> struct make<double, 2> {typedef vx::F64x2  type;};
+template <> struct make<double, 4> {typedef vx::F64x4  type;};
+template <> struct make<double, 8> {typedef vx::F64x8  type;};
 template <> struct make<int16_t, 4> {typedef vx::I16x4 type;};
+template <> struct make<int16_t, 8> {typedef vx::I16x8 type;};
 template <> struct make<int64_t, 2> {typedef vx::I64x2 type;};
 
 /// Returns 'false' vector {0,0,0,...}

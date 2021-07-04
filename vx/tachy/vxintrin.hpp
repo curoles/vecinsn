@@ -59,6 +59,7 @@ template <> struct make<float, 16> {typedef tvx::F32x16 type;};
 template <> struct make<double, 2> {typedef tvx::F64x2  type;};
 template <> struct make<double, 4> {typedef tvx::F64x4  type;};
 template <> struct make<double, 8> {typedef tvx::F64x8  type;};
+template <> struct make<int16_t, 8> {typedef tvx::S16x8 type;};
 template <> struct make<int32_t, 4> {typedef tvx::S32x4 type;};
 template <> struct make<int32_t, 8> {typedef tvx::S32x8 type;};
 template <> struct make<int32_t,16> {typedef tvx::S32x16 type;};

@@ -3,19 +3,15 @@
 #include <cassert>
 #include <type_traits>
 
-#if defined(__tachyum__)
-#include "vx/tachy/vxtypes.hpp"
-#else
-#include "vx/x86/vxtypes.hpp"
-#endif
+#include "vx/vxtypes.hpp"
 
 static bool test_type_maker()
 {
     vx::make<float,8>::type dyno;
-    static_assert(std::is_same<vx::Fx8, decltype(dyno)>::value);
+    static_assert(std::is_same<vx::F32x8, decltype(dyno)>::value);
 
-    vx::make<int16_t,4>::type dyno2;
-    static_assert(std::is_same<vx::I16x4, decltype(dyno2)>::value);
+    vx::make<int16_t,8>::type dyno2;
+    static_assert(std::is_same<vx::I16x8, decltype(dyno2)>::value);
 
     return true;
 }

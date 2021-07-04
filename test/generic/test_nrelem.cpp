@@ -3,17 +3,13 @@
 #include <cassert>
 #include <type_traits>
 
-#if defined(__tachyum__)
-#include "vx/tachyum/vxtypes.hpp"
-#else
-#include "vx/x86/vxtypes.hpp"
-#endif
+#include "vx/vxtypes.hpp"
 
 static bool test_nrelem()
 {
     using namespace vx;
 
-    static_assert(nrelem<U32x2>() == 2 and sizeof(U32x2) ==  8);
+    static_assert(nrelem<F64x8>() == 8 and sizeof(F64x8) == 64);
     static_assert(nrelem<U32x4>() == 4 and sizeof(U32x4) == 16);
     static_assert(nrelem<U32x8>() == 8 and sizeof(U32x8) == 32);
     static_assert(nrelem<U64x8>() == 8 and sizeof(U64x8) == 64);
