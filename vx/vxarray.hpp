@@ -26,9 +26,16 @@ struct array
 
     static constexpr std::size_t Cnt = (Sz + PSz - 1)/ PSz;
 
+    using value_type = T;
+    using reference = value_type&;
+
     using pv_type = typename vx::make<T, PSz>::type; ///< type of the packed vector
 
     pv_type pv[Cnt];
+
+    array(const array&) = default;
+
+    array& operator=(const array&) = default;
 
     /// Returns reference to n-th element.
     T& operator[](std::size_t i) const {
@@ -38,8 +45,8 @@ struct array
     /// Adds `this[n] += other[n]`.
     ///
     /// ```c++
-    /// vx::array<int16_t, 4, 2> a {pv: {{1,2,3,4},{5,6,7,8}}};
-    /// vx::array<int16_t, 4, 2> b {pv: {{4,3,2,1},{8,7,5,6}}};
+    /// vx::array<int16_t, 8> a {pv: {{1,2,3,4,5,6,7,8}}};
+    /// vx::array<int16_t, 8> b {pv: {{4,3,2,1,8,7,5,6}}};
     /// a.add(b);
     /// assert(a[6] == (7+5));
     /// ```
@@ -51,7 +58,7 @@ struct array
     }
 
     /// Subs `this[n] -= other[n]`.
-    array sub(const array& other) {
+    array& sub(const array& other) {
         for (std::size_t chunk = 0; chunk < Cnt; ++chunk) {
             pv[chunk] = vx::sub(pv[chunk], other.pv[chunk]);
         }
