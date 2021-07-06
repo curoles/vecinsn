@@ -6,12 +6,14 @@
  */
 #pragma once
 
-#include "vxtypes.hpp"
-#include "vxops.hpp"
+#include "vx/vxtypes.hpp"
+#include "vx/vxops.hpp"
+#include "vx/vxfun.hpp"
 
 namespace vx::cx {
 
 template <typename V>
+//concept where V is some vx type
 struct Complex
 {
     V real;

@@ -4,7 +4,6 @@
  * @copyright Igor Lesik 2020
  *
  */
-
 #pragma once
 
 namespace vx {
@@ -33,7 +32,7 @@ template <typename Acc, typename T> Acc sum(T v)
 #ifdef __AVX__
 // https://stackoverflow.com/questions/49941645/get-sum-of-values-stored-in-m256d-with-sse-avx
 //
-template <> double sum<double,Dx4>(Dx4 v)
+template <> double sum<double,F64x4>(F64x4 v)
 {
     __m128d vlow  = _mm256_castpd256_pd128(v);
     __m128d vhigh = _mm256_extractf128_pd(v, 1); // high 128
