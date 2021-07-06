@@ -35,6 +35,11 @@ add_executable(test_x86_complex
 )
 add_test(NAME x86-complex COMMAND test_x86_complex)
 
+add_executable(test_x86_array
+  ${CMAKE_CURRENT_SOURCE_DIR}/../generic/test_array.cpp
+)
+add_test(NAME x86-array COMMAND test_x86_array)
+
 #add_executable (test_basic test/test_basic.cpp)
 #add_executable (test_matrix test/test_matrix.cpp)
 
