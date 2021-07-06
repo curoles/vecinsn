@@ -99,13 +99,15 @@ static inline void store(double* mem, const F64x8& v) {_mm512_store_pd(mem, v);}
 static inline I8x8  add(I8x8  a, I8x8  b) {return (I8x8) _mm_add_pi8 ((__m64)a, (__m64)b);}
 static inline I16x4 add(I16x4 a, I16x4 b) {return (I16x4)_mm_add_pi16((__m64)a, (__m64)b);}
 static inline I32x2 add(I32x2 a, I32x2 b) {return (I32x2)_mm_add_pi32((__m64)a, (__m64)b);}
+static inline I16x8 add(const I16x8 a, const I16x8 b) {return (I16x8)_mm_add_epi16((__m128i)a, (__m128i)b);}
 static inline I64x2 add(const I64x2 a, const I64x2 b) {return (I64x2)_mm_add_epi64((__m128i)a, (__m128i)b);}
 static inline F64x2 add(const F64x2 a, const F64x2 b) {return (F64x2)_mm_add_pd((__m128d)a, (__m128d)b);}
 
 static inline I8x8  sub(I8x8  a, I8x8  b) {return (I8x8) _mm_sub_pi8 ((__m64)a, (__m64)b);}
 static inline I16x4 sub(I16x4 a, I16x4 b) {return (I16x4)_mm_sub_pi16((__m64)a, (__m64)b);}
 static inline I32x2 sub(I32x2 a, I32x2 b) {return (I32x2)_mm_sub_pi32((__m64)a, (__m64)b);}
-static inline I32x4 sub(I32x4 a, I32x4 b) {return (I32x4)_mm_sub_epi32((__m128i)a, (__m128i)b);}
+static inline I16x8 sub(const I16x8 a, const I16x8 b) {return (I16x8)_mm_sub_epi16((__m128i)a, (__m128i)b);}
+static inline I32x4 sub(const I32x4 a, const I32x4 b) {return (I32x4)_mm_sub_epi32((__m128i)a, (__m128i)b);}
 static inline F64x2 sub(const F64x2 a, const F64x2 b) {return (F64x2)_mm_sub_pd((__m128d)a, (__m128d)b);}
 static inline F32x4 sub(const F32x4 a, const F32x4 b) {return (F32x4)_mm_sub_ps((__m128)a, (__m128)b);}
 

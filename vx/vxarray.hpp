@@ -8,20 +8,24 @@
  */
 #pragma once
 
-#include "vxtypes.hpp"
-#include "vxops.hpp"
+#include "vx/vxtypes.hpp"
+#include "vx/vxops.hpp"
+#include "vx/vxfun.hpp"
 
 /// Namespace of all vector types and functions.
 ///
 namespace vx {
 
-
 /// Array of Vectors that pretends to be a vector of base-type elements.
 ///
-template <typename T, std::size_t PSz, std::size_t Cnt>
+template <typename T, std::size_t Sz>
 struct array
 {
-    static constexpr std::size_t Sz = PSz * Cnt; ///< total size, number of all elements
+    static constexpr std::size_t PSz =
+        recommended_vector_size_for_array<T, Sz>() / sizeof(T);
+
+    static constexpr std::size_t Cnt = (Sz + PSz - 1)/ PSz;
+
     using pv_type = typename vx::make<T, PSz>::type; ///< type of the packed vector
 
     pv_type pv[Cnt];
@@ -34,8 +38,8 @@ struct array
     /// Adds `this[n] += other[n]`.
     ///
     /// ```c++
-    /// vx::Array<int16_t, 4, 2> a {pv: {{1,2,3,4},{5,6,7,8}}};
-    /// vx::Array<int16_t, 4, 2> b {pv: {{4,3,2,1},{8,7,5,6}}};
+    /// vx::array<int16_t, 4, 2> a {pv: {{1,2,3,4},{5,6,7,8}}};
+    /// vx::array<int16_t, 4, 2> b {pv: {{4,3,2,1},{8,7,5,6}}};
     /// a.add(b);
     /// assert(a[6] == (7+5));
     /// ```

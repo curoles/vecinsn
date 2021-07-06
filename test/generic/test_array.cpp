@@ -9,9 +9,12 @@ static bool test_array()
 {
     using namespace vx;
 
-    vx::array<int16_t, 4, 2> a {pv: {{1,2,3,4},{5,6,7,8}}};
-    vx::array<int16_t, 4, 2> b {pv: {{4,3,2,1},{8,7,5,6}}};
-    assert(a.pv[1][1] == 6);
+    vx::array<int16_t, 8> a {pv: {{1,2,3,4,5,6,7,8}}};
+    vx::array<int16_t, 8> b {pv: {{4,3,2,1,8,7,5,6}}};
+
+    static_assert(a.PSz == 8 and a.Cnt == 1);
+
+    assert(a.pv[0][5] == 6);
     assert(a[6] == 7);
 
     a.add(b);

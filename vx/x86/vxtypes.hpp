@@ -71,6 +71,9 @@ VX_DEF8 (double,F64,d)
 #undef VX_DEF32
 #undef VX_DEF64
 
+const std::size_t MIN_VSIZE = 64/8;
+const std::size_t MAX_VSIZE = 512/8;
+
 union Vec64 {
     __m64 mm;
     U8x8     u8; I8x8   i8;
@@ -222,5 +225,20 @@ template <typename TTo, typename TFrom> TTo convert(TFrom a)
 #endif
 
 
+template<typename T, std::size_t ARRAY_SIZE>
+constexpr std::size_t recommended_vector_size_for_array()
+{
+    constexpr std::size_t size = sizeof(T) * ARRAY_SIZE;
+
+    if constexpr (size <= (64/8)) { return (64/8); }
+    else if constexpr (size <= (128/8)) { return (128/8); }
+    else if constexpr (size <= (256/8)) { return (256/8); }
+    else if constexpr (size <= ((128*3)/8)) { return (128/8); }
+    else if constexpr (size <= (512/8)) { return (512/8); }
+    else if constexpr (size <= ((256*3)/8)) { return (256/8); }
+    else if constexpr (size <= ((512*2)/8)) { return (512/8); }
+    else if constexpr (size <= ((256*5)/8)) { return (256/8); }
+    else { return (512/8); }
+}
 
 } // namespace vx
