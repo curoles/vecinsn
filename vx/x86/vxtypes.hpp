@@ -126,6 +126,7 @@ template <> struct make<double, 2> {typedef vx::F64x2  type;};
 template <> struct make<double, 4> {typedef vx::F64x4  type;};
 template <> struct make<double, 8> {typedef vx::F64x8  type;};
 template <> struct make<int16_t, 4> {typedef vx::I16x4 type;};
+template <> struct make<uint32_t, 4> {typedef vx::U32x4 type;};
 template <> struct make<int16_t, 8> {typedef vx::I16x8 type;};
 template <> struct make<int64_t, 2> {typedef vx::I64x2 type;};
 

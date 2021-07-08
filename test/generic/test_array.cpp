@@ -24,8 +24,11 @@ static bool test_array()
     a.sub(b);
     assert(a[6] == 7);
 
-    auto&& c = a + b;
+    auto c = a + b;
     assert(c.at(7) == (8+6));
+
+    c[3] = 777;
+    assert(c[3] == 777);
 
     return true;
 }
@@ -54,6 +57,13 @@ static bool test_array_forloop()
         //printf("%f\n", v);
         assert(std::fabs(v - 777.123) < 0.001);
     }
+
+    vx::array<uint32_t, 4> e;
+    e.fill(0);
+    auto it = e.begin();
+    ++it; ++it;
+    *it = 123;
+    assert(e[0]==0 && e[1]==0 && e[2]==123);
 
     return true;
 }
