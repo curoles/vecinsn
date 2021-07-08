@@ -5,6 +5,7 @@
 #include <type_traits>
 
 #include "vx/vxarray.hpp"
+#include "vx/vxalmostequal.hpp"
 
 static bool test_array()
 {
@@ -33,19 +34,6 @@ static bool test_array()
     return true;
 }
 
-#if 0
-template<class T>
-typename std::enable_if<!std::numeric_limits<T>::is_integer, bool>::type
-almost_equal(T x, T y, unsigned int ulp)
-{
-    // the machine epsilon has to be scaled to the magnitude of the values used
-    // and multiplied by the desired precision in ULPs (units in the last place)
-    return std::fabs(x-y) <= std::numeric_limits<T>::epsilon() * std::fabs(x+y) * ulp
-        // unless the result is subnormal
-        || std::fabs(x-y) < std::numeric_limits<T>::min();
-}
-#endif
-
 static bool test_array_forloop()
 {
     using namespace vx;
@@ -57,6 +45,9 @@ static bool test_array_forloop()
         //printf("%f\n", v);
         assert(std::fabs(v - 777.123) < 0.001);
     }
+
+    assert(container_values_almost_equal(d, 777.123, 2));
+    assert(!container_values_almost_equal(d, 777.1234, 2));
 
     vx::array<uint32_t, 4> e;
     e.fill(0);

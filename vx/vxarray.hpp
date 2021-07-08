@@ -77,6 +77,14 @@ public:
         return operator[](pos);
     }
 
+    reference front() {
+        return at(0);
+    }
+
+    reference back() {
+        return at(Sz-1);
+    }
+
     /// Adds `this[n] += other[n]`.
     ///
     /// ```c++
@@ -107,6 +115,35 @@ public:
         }
     }
 
+    struct iterator
+    {
+        using iterator_category = std::forward_iterator_tag;
+        //using difference_type   = std::ptrdiff_t;
+        using value_type        = T;
+        using pointer           = value_type*;
+        using reference         = value_type&;
+
+        iterator(vx::array<T,Sz>& ar, std::size_t pos):
+            ar_(ar), pos_(pos) {}
+
+        reference operator*() const { return ar_.at(pos_); }
+        //pointer operator->() { return ptr_; }
+        iterator& /*prefix*/ operator++() { pos_++; return *this; }
+        iterator operator++(int) {
+            iterator tmp = *this; ++(*this); return tmp; }
+
+        friend bool operator== (const iterator& a, const iterator& b) {
+            return a.pos_ == b.pos_;
+        };
+        friend bool operator!= (const iterator& a, const iterator& b) {
+            return a.pos_ != b.pos_;
+        };
+
+    private:
+        vx::array<T,Sz>& ar_;
+        std::size_t pos_;
+    };
+
     struct const_iterator
     {
         using iterator_category = std::forward_iterator_tag;
@@ -115,10 +152,10 @@ public:
         using pointer           = value_type*;
         using reference         = value_type&;
 
-        const_iterator(vx::array<T,Sz>& ar, std::size_t pos):
+        const_iterator(const vx::array<T,Sz>& ar, std::size_t pos):
             ar_(ar), pos_(pos) {}
 
-        const reference operator*() const { return ar_.at(pos_); }
+        reference operator*() const { return ar_.at(pos_); }
         //pointer operator->() { return ptr_; }
         const_iterator& /*prefix*/ operator++() { pos_++; return *this; }
         const_iterator operator++(int) {
@@ -132,15 +169,15 @@ public:
         };
 
     private:
-        vx::array<T,Sz>& ar_;
+        const vx::array<T,Sz>& ar_;
         std::size_t pos_;
     };
 
-    const_iterator cbegin() { return const_iterator(*this, 0); }
-    const_iterator cend()   { return const_iterator(*this, Sz); }
+    iterator begin()  { return iterator(*this, 0); }
+    iterator end()    { return iterator(*this, Sz); }
 
-    const_iterator begin() { return const_iterator(*this, 0); }
-    const_iterator end()   { return const_iterator(*this, Sz); }
+    const_iterator cbegin() const { return const_iterator(*this, 0); }
+    const_iterator cend()   const { return const_iterator(*this, Sz); }
 };
 
 template <typename T, std::size_t Sz>
