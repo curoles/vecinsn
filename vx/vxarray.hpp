@@ -10,6 +10,7 @@
 
 #include <stdexcept>
 #include <iterator>
+#include <functional>
 
 #include "vx/vxtypes.hpp"
 #include "vx/vxops.hpp"
@@ -112,6 +113,12 @@ public:
     void fill(const T& value) {
         for (std::size_t chunk = 0; chunk < Cnt; ++chunk) {
             vx::fill(pv[chunk], value);
+        }
+    }
+
+    void foreach_chunk(std::function<void(pv_type&)> fun) {
+        for (std::size_t chunk = 0; chunk < Cnt; ++chunk) {
+            fun(pv[chunk]);
         }
     }
 

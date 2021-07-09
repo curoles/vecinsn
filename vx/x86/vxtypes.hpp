@@ -33,13 +33,26 @@ namespace vx {
 using uint128_t = __uint128_t;
 using  int128_t =  __int128_t;
 
-#define VX_DECL(elcount, type)  __attribute__ ((vector_size (elcount*sizeof(type))))
+/// Compile-time type maker.
+///
+/// Metaprogramming facility to dynamically construct Vector type in compile-time.
+/// ```c++
+/// vx::make<float,8>::type dyno;
+/// static_assert(std::is_same<vx::F32x8, decltype(dyno)>::value);
+/// ```
+///
+template <typename T, unsigned N> struct make {typedef void type;};
 
-#define VX_DEF(type,mn,mn2,count) \
-/** Vector type[count] */ \
-using mn##x##count = type VX_DECL(count, type); \
-/** Vector type[count] */ \
-using V##count##mn2 = mn##x##count;
+
+#define VX_DECL(count, type)  __attribute__ ((vector_size (count*sizeof(type))))
+
+#define VX_DEF(Type,mn,mn2,count) \
+/** Vector Type[count] */ \
+using mn##x##count = Type VX_DECL(count, Type); \
+/** Vector Type[count] */ \
+using V##count##mn2 = mn##x##count; \
+/** specialize template make<Type,count>::type */ \
+template <> struct make<Type,count> {typedef vx::mn##x##count type;};
 
 #define VX_DEF2(type,mn,mn2) VX_DEF(type,mn,mn2,2)
 #define VX_DEF4(type,mn,mn2) VX_DEF(type,mn,mn2,4) VX_DEF2(type,mn,mn2)
@@ -109,31 +122,40 @@ union Vec512 {
     U128x4 u128; I128x4 i128;
 };
 
-/// Compile-time type maker.
+/// Get base type of vector.
 ///
-/// Metaprogramming facility to dynamically construct Vector type in compile-time.
+/// Example:
 /// ```c++
-/// vx::make<float,8>::type dyno;
-/// static_assert(std::is_same<vx::Fx8, decltype(dyno)>::value);
+/// template <typename T> constexpr unsigned nrelem()
+/// {
+///     return sizeof(T)/sizeof(typename get_base<T>::type);
+/// }
 /// ```
 ///
-template <typename T, unsigned N> struct make {typedef void type;};
-template <> struct make<float,  2> {typedef vx::F32x2  type;};
-template <> struct make<float,  4> {typedef vx::F32x4  type;};
-template <> struct make<float,  8> {typedef vx::F32x8  type;};
-template <> struct make<float, 16> {typedef vx::F32x16 type;};
-template <> struct make<double, 2> {typedef vx::F64x2  type;};
-template <> struct make<double, 4> {typedef vx::F64x4  type;};
-template <> struct make<double, 8> {typedef vx::F64x8  type;};
-template <> struct make<int16_t, 4> {typedef vx::I16x4 type;};
-template <> struct make<uint32_t, 4> {typedef vx::U32x4 type;};
-template <> struct make<int16_t, 8> {typedef vx::I16x8 type;};
-template <> struct make<int64_t, 2> {typedef vx::I64x2 type;};
+/// Use this template instead of macros like:
+/// `#define VX_BASE_TYPE(T) decltype(((T){})[0])`
+///
+template <typename T>
+struct get_base {
+    typedef decltype(((T){})[0]) type;
+};
 
-/// Returns 'false' vector {0,0,0,...}
+/// Compile-time function that returns number of elements.
+///
+/// Example:
+/// ```c++
+/// static_assert(nrelem<U32x8>() == 8 and sizeof(U32x8) == 32);
+/// ```
+template <typename T>
+constexpr unsigned nrelem()
+{
+    return sizeof(T)/sizeof(typename get_base<T>::type);
+}
+
+/// Return 'false' vector {0,0,0,...}
 template <typename T> constexpr T false_vec() { return (T){0}; }
 
-/// Returns 'true' vector {-1,-1,-1,...}
+/// Return 'true' vector {-1,-1,-1,...}
 template <typename T> constexpr T true_vec() { return !false_vec<T>(); }
 
 /// Compare two vectors for equality.
@@ -148,7 +170,8 @@ template <typename T> constexpr T true_vec() { return !false_vec<T>(); }
 /// assert(equal(a - b, (V4si){0,0,0,0}));
 /// assert(equal(a + b, a * 2));
 /// ```
-template <typename T> bool equal(T a, T b)
+template <typename T>
+bool equal(T a, T b)
 {
     T cmp = (a == b);
 
@@ -163,31 +186,6 @@ template <typename T> bool equal(T a, T b)
     else if constexpr (sizeof(T) == 8) {
         return (uint64_t)cmp == 0xffff'ffff'ffff'ffffUL;
     }
-}
-
-// Do *NOT* use this macro, use vx::get_base<T>::type
-//#define VX_BASE_TYPE(T) decltype(((T){})[0])
-
-/// Get base type of vector.
-///
-/// Example:
-/// ```c++
-/// template <typename T> constexpr unsigned nrelem()
-/// {
-///     return sizeof(T)/sizeof(typename get_base<T>::type);
-/// }
-/// ```
-template <typename T> struct get_base {typedef decltype(((T){})[0]) type;};
-
-/// Compile-time function that returns number of elements.
-///
-/// Example:
-/// ```c++
-/// static_assert(nrelem<U32x8>() == 8 and sizeof(U32x8) == 32);
-/// ```
-template <typename T> constexpr unsigned nrelem()
-{
-    return sizeof(T)/sizeof(typename get_base<T>::type);
 }
 
 

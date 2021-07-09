@@ -56,6 +56,12 @@ static bool test_array_forloop()
     *it = 123;
     assert(e[0]==0 && e[1]==0 && e[2]==123);
 
+    e.foreach_chunk([](decltype(e)::pv_type& chunk)->void {
+        vx::fill(chunk, 321);
+    });
+
+    assert(e[0]==321 && e[1]==321 && e[2]==321);
+
     return true;
 }
 

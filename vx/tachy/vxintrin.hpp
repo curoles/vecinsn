@@ -52,21 +52,6 @@ template <typename T> constexpr unsigned nrelem() {
     return sizeof(T)/sizeof(typename get_base<T>::type);
 }
 
-template <typename T, unsigned N> struct make {typedef void type;};
-template <> struct make<float,  4> {typedef tvx::F32x4  type;};
-template <> struct make<float,  8> {typedef tvx::F32x8  type;};
-template <> struct make<float, 16> {typedef tvx::F32x16 type;};
-template <> struct make<double, 2> {typedef tvx::F64x2  type;};
-template <> struct make<double, 4> {typedef tvx::F64x4  type;};
-template <> struct make<double, 8> {typedef tvx::F64x8  type;};
-template <> struct make<int16_t, 8> {typedef tvx::S16x8 type;};
-template <> struct make<int32_t, 4> {typedef tvx::S32x4 type;};
-template <> struct make<int32_t, 8> {typedef tvx::S32x8 type;};
-template <> struct make<int32_t,16> {typedef tvx::S32x16 type;};
-template <> struct make<uint32_t, 4> {typedef tvx::U32x4 type;};
-template <> struct make<uint32_t, 8> {typedef tvx::U32x8 type;};
-template <> struct make<uint32_t,16> {typedef tvx::U32x16 type;};
-
 static inline U8x64
 __attribute__ ((__gnu_inline__, __always_inline__, __artificial__))
 hadd(U8x64 a) {
