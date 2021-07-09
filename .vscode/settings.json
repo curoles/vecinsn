@@ -2,5 +2,8 @@
     "files.autoSave": "afterDelay",
     "cmake.buildDirectory": "${workspaceFolder}/../build",
     "cmake.buildBeforeRun": false,
-    "cmake.configureOnEdit": false
+    "cmake.configureOnEdit": false,
+    "files.associations": {
+        "type_traits": "cpp"
+    }
 }

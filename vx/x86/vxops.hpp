@@ -17,55 +17,65 @@
  */
 #pragma once
 
+#include <type_traits>
+//#include <concepts>
+
 #include "vxtypes.hpp"
 
 /// Namespace of all vector types and functions.
 ///
 namespace vx {
 
+template<typename T, typename Enable = void>
+struct opaque;
+
+template<typename T>
+struct opaque<T, std::enable_if_t<sizeof(T)==8> >
+{typedef __m64 type;};
+
+template<typename T>
+struct opaque<T, std::enable_if_t<sizeof(T)==16> >
+{typedef __m128i type;};
+
+template<typename T>
+struct opaque<T, std::enable_if_t<sizeof(T)==32> >
+{typedef __m256i type;};
+
+template<typename T>
+struct opaque<T, std::enable_if_t<sizeof(T)==64> >
+{typedef __m512i type;};
+
+
 /// Test all bits of all elements are 1.
-static inline int test_all_ones(U64x2 v) {return _mm_test_all_ones((__m128i)v);}
-static inline int test_all_ones(I64x2 v) {return _mm_test_all_ones((__m128i)v);}
-static inline int test_all_ones(U32x4 v) {return _mm_test_all_ones((__m128i)v);}
-static inline int test_all_ones(I32x4 v) {return _mm_test_all_ones((__m128i)v);}
-static inline int test_all_ones(U16x8 v) {return _mm_test_all_ones((__m128i)v);}
-static inline int test_all_ones(I16x8 v) {return _mm_test_all_ones((__m128i)v);}
-static inline int test_all_ones(U8x16 v) {return _mm_test_all_ones((__m128i)v);}
-static inline int test_all_ones(I8x16 v) {return _mm_test_all_ones((__m128i)v);}
-static inline int test_all_ones(F32x4 v) {return _mm_test_all_ones((__m128i)v);}
-static inline int test_all_ones(F64x2 v) {return _mm_test_all_ones((__m128i)v);}
+template<typename T, typename = std::enable_if_t<sizeof(T)==16>>
+int test_all_ones(T v) {
+    return _mm_test_all_ones((__m128i)v);
+}
+
 
 /// Test all bits of all elements are 0.
-static inline int test_all_zeros(U64x2 v, uint128_t m = -1) {return _mm_test_all_zeros((__m128i)v, (__m128i)m);}
-static inline int test_all_zeros(I64x2 v, uint128_t m = -1) {return _mm_test_all_zeros((__m128i)v, (__m128i)m);}
-static inline int test_all_zeros(U32x4 v, uint128_t m = -1) {return _mm_test_all_zeros((__m128i)v, (__m128i)m);}
-static inline int test_all_zeros(I32x4 v, uint128_t m = -1) {return _mm_test_all_zeros((__m128i)v, (__m128i)m);}
-static inline int test_all_zeros(U16x8 v, uint128_t m = -1) {return _mm_test_all_zeros((__m128i)v, (__m128i)m);}
-static inline int test_all_zeros(I16x8 v, uint128_t m = -1) {return _mm_test_all_zeros((__m128i)v, (__m128i)m);}
-static inline int test_all_zeros(U8x16 v, uint128_t m = -1) {return _mm_test_all_zeros((__m128i)v, (__m128i)m);}
-static inline int test_all_zeros(I8x16 v, uint128_t m = -1) {return _mm_test_all_zeros((__m128i)v, (__m128i)m);}
-static inline int test_all_zeros(F32x4 v, uint128_t m = -1) {return _mm_test_all_zeros((__m128i)v, (__m128i)m);}
-static inline int test_all_zeros(F64x2 v, uint128_t m = -1) {return _mm_test_all_zeros((__m128i)v, (__m128i)m);}
+template<typename T, typename = std::enable_if_t<sizeof(T)==16>>
+int test_all_zeros(T v, uint128_t m = -1) {
+    return _mm_test_all_zeros((__m128i)v, (__m128i)m);
+}
 
-static inline void fill_zero_(__m64&   v) {v = _mm_setzero_si64();}
-static inline void fill_zero_(__m128i& v) {v = _mm_setzero_si128();}
-static inline void fill_zero_(__m256i& v) {v = _mm256_setzero_si256();}
-static inline void fill_zero_(__m512i& v) {v = _mm512_setzero_si512();}
+//template<typename T>
+//concept integral_vector_c = std::is_integral_v<(get_base<T>::type)>;
+
+static inline void fill_zero_i(__m64&   v) {v = _mm_setzero_si64();}
+static inline void fill_zero_i(__m128i& v) {v = _mm_setzero_si128();}
+static inline void fill_zero_i(__m256i& v) {v = _mm256_setzero_si256();}
+static inline void fill_zero_i(__m512i& v) {v = _mm512_setzero_si512();}
 
 /// Set all bits of all elements to 0.
-static inline void fill_zero(U32x2& v)  {fill_zero_((__m64  &)v);}
-static inline void fill_zero(U32x4& v)  {fill_zero_((__m128i&)v);}
-static inline void fill_zero(U32x8& v)  {fill_zero_((__m256i&)v);}
-static inline void fill_zero(U32x16& v) {fill_zero_((__m512i&)v);}
-
-static inline void fill_zero(I32x2& v)  {fill_zero_((__m64  &)v);}
-static inline void fill_zero(I32x4& v)  {fill_zero_((__m128i&)v);}
-static inline void fill_zero(I32x8& v)  {fill_zero_((__m256i&)v);}
-static inline void fill_zero(I32x16& v) {fill_zero_((__m512i&)v);}
-
-static inline void fill_zero(U64x2& v) {fill_zero_((__m128i&)v);}
-static inline void fill_zero(U64x4& v) {fill_zero_((__m256i&)v);}
-static inline void fill_zero(U64x8& v) {fill_zero_((__m512i&)v);}
+template<typename T,
+    typename = std::enable_if_t<
+        std::is_integral_v<typename get_base<T>::type>
+        >
+    >
+void fill_zero(T& v) {
+    fill_zero_i((typename opaque<T>::type &)v);
+}
 
 static inline void fill_zero(F32x4& v) {v = _mm_setzero_ps();}
 static inline void fill_zero(F32x8& v) {v = _mm256_setzero_ps();}
