@@ -27,22 +27,22 @@
 namespace vx {
 
 template<typename T, typename Enable = void>
-struct opaque;
+struct opaque_int;
 
 template<typename T>
-struct opaque<T, std::enable_if_t<sizeof(T)==8> >
+struct opaque_int<T, std::enable_if_t<sizeof(T)==8> >
 {typedef __m64 type;};
 
 template<typename T>
-struct opaque<T, std::enable_if_t<sizeof(T)==16> >
+struct opaque_int<T, std::enable_if_t<sizeof(T)==16> >
 {typedef __m128i type;};
 
 template<typename T>
-struct opaque<T, std::enable_if_t<sizeof(T)==32> >
+struct opaque_int<T, std::enable_if_t<sizeof(T)==32> >
 {typedef __m256i type;};
 
 template<typename T>
-struct opaque<T, std::enable_if_t<sizeof(T)==64> >
+struct opaque_int<T, std::enable_if_t<sizeof(T)==64> >
 {typedef __m512i type;};
 
 
@@ -74,7 +74,7 @@ template<typename T,
         >
     >
 void fill_zero(T& v) {
-    fill_zero_i((typename opaque<T>::type &)v);
+    fill_zero_i((typename opaque_int<T>::type &)v);
 }
 
 static inline void fill_zero(F32x4& v) {v = _mm_setzero_ps();}
